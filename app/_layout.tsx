@@ -1,59 +1,62 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
+import {useFonts} from 'expo-font';
+import {Stack} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/components/useColorScheme';
+import {useColorScheme} from '@/components/useColorScheme';
 
 export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
+    ErrorBoundary,
 } from 'expo-router';
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+    initialRouteName: 'index',
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
-  });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+    const [fontsLoaded, error] = useFonts({
+        "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
+        "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
+        "Poppins-ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
+        "Poppins-ExtraLight": require("../assets/fonts/Poppins-ExtraLight.ttf"),
+        "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
+        "Poppins-Medium": require("../assets/fonts/Poppins-Medium.ttf"),
+        "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
+        "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
+        "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
+    });
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+    useEffect(() => {
+        if (error) throw error;
 
-  if (!loaded) {
-    return null;
-  }
+        if (fontsLoaded) {
+            SplashScreen.hideAsync();
+        }
+    }, [fontsLoaded, error]);
 
-  return <RootLayoutNav />;
+    if (!fontsLoaded) return null;
+
+    if (!fontsLoaded && !error) return null;
+
+    return <RootLayoutNav/>;
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+    const colorScheme = useColorScheme();
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
-  );
+    return (
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack>
+                <Stack.Screen name="index" options={{headerShown: false}}/>
+                <Stack.Screen name="login" options={{headerShown: false}}/>
+                <Stack.Screen name="signup" options={{headerShown: false}}/>
+                <Stack.Screen name="help" options={{headerShown: false}}/>
+            </Stack>
+        </ThemeProvider>
+    );
 }
