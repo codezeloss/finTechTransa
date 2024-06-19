@@ -43,7 +43,10 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 function InitialLayout() {
-
+    const colorScheme = useColorScheme();
+    const router = useRouter()
+    const {isLoaded, isSignedIn} = useAuth()
+    const segments = useSegments()
     const [fontsLoaded, error] = useFonts({
         "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
         "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -58,20 +61,14 @@ function InitialLayout() {
 
     useEffect(() => {
         if (error) throw error;
+    }, [error]);
+
+    useEffect(() => {
 
         if (fontsLoaded) {
             SplashScreen.hideAsync();
         }
-    }, [fontsLoaded, error]);
-
-    if (!fontsLoaded) return null;
-
-    if (!fontsLoaded && !error) return null;
-
-    const colorScheme = useColorScheme();
-    const router = useRouter()
-    const {isLoaded, isSignedIn} = useAuth()
-    const segments = useSegments()
+    }, [fontsLoaded]);
 
     useEffect(() => {
         if (!isLoaded) return
@@ -94,7 +91,6 @@ function InitialLayout() {
     }
 
     return (
-
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <StatusBar style="light"/>
             <Stack>
@@ -146,7 +142,6 @@ function InitialLayout() {
                 <Stack.Screen name="(authenticated)/(tabs)" options={{headerShown: false}}/>
             </Stack>
         </ThemeProvider>
-
     );
 }
 
