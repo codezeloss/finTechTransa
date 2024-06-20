@@ -64,7 +64,6 @@ function InitialLayout() {
     }, [error]);
 
     useEffect(() => {
-
         if (fontsLoaded) {
             SplashScreen.hideAsync();
         }
@@ -80,7 +79,7 @@ function InitialLayout() {
         } else if (!isSignedIn) {
             router.replace("/")
         }
-    }, [isSignedIn]);
+    }, [isLoaded, isSignedIn]);
 
     if (!fontsLoaded || !isLoaded) {
         return (
@@ -149,7 +148,7 @@ const RootLayoutNav = () => {
     return (
         <ClerkProvider tokenCache={tokenCache} publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY as string}>
             <GestureHandlerRootView style={{flex: 1}}>
-                <StatusBar style="light"/>
+                <StatusBar backgroundColor="#161622" style="light"/>
                 <InitialLayout/>
             </GestureHandlerRootView>
         </ClerkProvider>

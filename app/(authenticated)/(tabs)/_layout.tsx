@@ -2,6 +2,7 @@ import {Tabs} from "expo-router";
 import {FontAwesome} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import {Image, Text, View} from "react-native";
+import {BlurView} from "expo-blur";
 
 type Props = {
     icon: any,
@@ -25,10 +26,15 @@ export default function TabsLayout() {
             tabBarShowLabel: false,
             tabBarActiveTintColor: Colors.primary,
             tabBarInactiveTintColor: "#a5b4fc",
+            tabBarBackground: () => (
+                <BlurView intensity={100} style={{flex: 1, backgroundColor: "rgba(0, 0, 0, 0.05)"}}/>
+            ),
             tabBarStyle: {
                 paddingVertical: 4,
                 height: 60,
-                backgroundColor: Colors.lightGray,
+                backgroundColor: "transparent",
+                position: "absolute",
+                bottom: 0
             }
         }}>
             <Tabs.Screen name="home" options={{
