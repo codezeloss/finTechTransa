@@ -3,6 +3,7 @@ import {FontAwesome} from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import {Image, Text, View} from "react-native";
 import {BlurView} from "expo-blur";
+import CustomHeader from "@/components/CustomHeader";
 
 type Props = {
     icon: any,
@@ -27,14 +28,18 @@ export default function TabsLayout() {
             tabBarActiveTintColor: Colors.primary,
             tabBarInactiveTintColor: "#a5b4fc",
             tabBarBackground: () => (
-                <BlurView intensity={100} style={{flex: 1, backgroundColor: "rgba(0, 0, 0, 0.05)"}}/>
+                <BlurView intensity={100} tint="extraLight" style={{flex: 1, backgroundColor: "rgba(0, 0, 0, 0.05)"}}/>
             ),
             tabBarStyle: {
                 paddingVertical: 4,
                 height: 60,
                 backgroundColor: "transparent",
                 position: "absolute",
-                bottom: 0
+                bottom: 0,
+                left: 0,
+                right: 0,
+                elevation: 0,
+                borderTopWidth: 0
             }
         }}>
             <Tabs.Screen name="home" options={{
