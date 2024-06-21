@@ -4,6 +4,9 @@ import {useHeaderHeight} from "@react-navigation/elements";
 import {useQuery} from "@tanstack/react-query";
 import Colors from "@/constants/Colors";
 import {useState} from "react";
+import {CartesianChart, Line} from "victory-native";
+import {useFont} from "@shopify/react-native-skia";
+import {format} from "date-fns";
 
 const categories = ["Overview", "News", "Orders", "Transactions"]
 
@@ -11,8 +14,9 @@ export default function CryptoDetailsScreen() {
     const {id} = useLocalSearchParams()
     const headerHeight = useHeaderHeight()
     const [activeIndex, setActiveIndex] = useState(0)
+    const font = useFont(require("@/assets/fonts/Poppins-Regular.ttf"), 10);
 
-    const {data, isLoading} = useQuery({
+    const {data} = useQuery({
         queryKey: ['info', id],
         queryFn: async () => {
             const info = await fetch(`/api/info?ids=${id}`).then((res) => res.json())
@@ -20,8 +24,17 @@ export default function CryptoDetailsScreen() {
         },
         enabled: !!id
     })
-    if (isLoading) return <ActivityIndicator/>
 
+
+    const {data: tickers} = useQuery({
+        queryKey: ['tickers'],
+        queryFn: async () => fetch(`/api/tickers`).then((res) => res.json())
+    })
+
+    const DATA = Array.from({length: 31}, (_, i) => ({
+        day: i,
+        highTmp: 40 + 30 * Math.random(),
+    }));
 
     return (
         <View className="p-4 mt-6 bg-white flex-1">
@@ -45,7 +58,7 @@ export default function CryptoDetailsScreen() {
                     >
                         {categories.map((category, index) => (
                             <TouchableOpacity key={index}
-                                              className={`flex-1 rounded-full border-gray-100 px-0.5 py-2 ${activeIndex === index ? "bg-gray-100/50 border" : "bg-white border-0"}`}
+                                              className={`flex-1 rounded-full border-gray-100 px-0.5 py-2 ${activeIndex === index ? "bg-gray-100/50" : "bg-white"}`}
                                               onPress={() => setActiveIndex(index)}>
                                 <Text
                                     className={`text-[11px] text-center ${activeIndex === index ? "font-pMedium" : "font-pRegular text-gray-500"}`}>{category}</Text>
@@ -66,7 +79,24 @@ export default function CryptoDetailsScreen() {
                 )}
                 renderItem={({item}) => (
                     <>
-                        <View className="h-[400px] mb-6 bg-green-600"></View>
+                        <View className="h-[400px] mb-6 rounded-xl border border-gray-200 p-4">
+                            {tickers && <CartesianChart
+                                axisOptions={{
+                                    font,
+                                    tickCount: 5,
+                                    labelOffset: {x: -2, y: 0},
+                                    labelColor: Colors.gray,
+                                    formatYLabel: (v) => `${v} $`,
+                                    formatXLabel: (ms) => format(new Date(ms), "MM/yy")
+                                }}
+                                data={tickers!}
+                                xKey="timestamp"
+                                yKeys={["price"]}>
+                                {({points}) => (
+                                    <Line points={points?.price} color={Colors.primary} strokeWidth={3}/>
+                                )}
+                            </CartesianChart>}
+                        </View>
 
                         <View className="border border-gray-200 rounded-xl p-4">
                             <Text className="font-pMedium text-base">Overview</Text>
