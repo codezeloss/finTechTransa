@@ -3,13 +3,10 @@ import {SafeAreaView, TouchableOpacity} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import {useAssets} from "expo-asset";
 import {ResizeMode, Video} from "expo-av";
-import {Link, useRouter, useSegments} from "expo-router";
-import {useAuth} from "@clerk/clerk-expo";
-import {useEffect} from "react";
+import {Link} from "expo-router";
 
 export default function TabOneScreen() {
     const [assets, error] = useAssets([require('@/assets/videos/intro.mp4')]);
-
 
     return (
         <SafeAreaView className="flex-1 flex justify-between">

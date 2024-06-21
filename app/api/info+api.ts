@@ -4,7 +4,7 @@ export async function GET(request: Request) {
     // const ids = request.expoUrl.searchParams.get('ids');
 
     // const response = await fetch(
-    //   `https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?id=${ids}`,
+    //   `https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?ids=${ids}`,
     //   {
     //     headers: {
     //       'X-CMC_PRO_API_KEY': API_KEY!,

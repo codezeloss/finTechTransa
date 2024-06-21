@@ -12,8 +12,10 @@ import {Ionicons} from "@expo/vector-icons";
 import {StatusBar} from "expo-status-bar";
 import {ClerkProvider, useAuth} from "@clerk/clerk-expo";
 import * as SecureStore from "expo-secure-store";
-import {Text} from "@/components/Themed";
 import {GestureHandlerRootView} from "react-native-gesture-handler";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+
+const queryClient = new QueryClient()
 
 const tokenCache = {
     async getToken(key: string) {
@@ -139,6 +141,30 @@ function InitialLayout() {
                     ),
                 }}/>
                 <Stack.Screen name="(authenticated)/(tabs)" options={{headerShown: false}}/>
+                <Stack.Screen name="(authenticated)/crypto/[id]" options={{
+                    headerShown: true,
+                    title: "",
+                    headerBackTitle: "",
+                    headerShadowVisible: false,
+                    headerTransparent: true,
+                    headerLargeTitle: true,
+                    headerStyle: {backgroundColor: "white"},
+                    headerLeft: () => (
+                        <TouchableOpacity onPress={router.back}>
+                            <Ionicons name="arrow-back" size={24} color={`${Colors.dark}`}/>
+                        </TouchableOpacity>
+                    ),
+                    headerRight: () => (
+                        <View className="flex-row space-x-4">
+                            <TouchableOpacity>
+                                <Ionicons name="notifications-outline" size={24} color={`${Colors.dark}`}/>
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <Ionicons name="star-outline" size={24} color={`${Colors.dark}`}/>
+                            </TouchableOpacity>
+                        </View>
+                    ),
+                }}/>
             </Stack>
         </ThemeProvider>
     );
@@ -147,10 +173,12 @@ function InitialLayout() {
 const RootLayoutNav = () => {
     return (
         <ClerkProvider tokenCache={tokenCache} publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY as string}>
-            <GestureHandlerRootView style={{flex: 1}}>
-                <StatusBar backgroundColor="#161622" style="light"/>
-                <InitialLayout/>
-            </GestureHandlerRootView>
+            <QueryClientProvider client={queryClient}>
+                <GestureHandlerRootView style={{flex: 1}}>
+                    <StatusBar backgroundColor="#161622" style="light"/>
+                    <InitialLayout/>
+                </GestureHandlerRootView>
+            </QueryClientProvider>
         </ClerkProvider>
     );
 };
