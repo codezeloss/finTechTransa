@@ -1,20 +1,32 @@
-import {ActivityIndicator, Image, ScrollView, SectionList, Text, TouchableOpacity, View} from "react-native";
+import {Image, ScrollView, SectionList, Text, TouchableOpacity, View} from "react-native";
 import {useLocalSearchParams} from "expo-router";
 import {useHeaderHeight} from "@react-navigation/elements";
 import {useQuery} from "@tanstack/react-query";
 import Colors from "@/constants/Colors";
-import {useState} from "react";
-import {CartesianChart, Line} from "victory-native";
-import {useFont} from "@shopify/react-native-skia";
+import {useEffect, useState} from "react";
+import {CartesianChart, Line, useChartPressState} from "victory-native";
+import {Circle, useFont} from "@shopify/react-native-skia";
 import {format} from "date-fns";
+import * as Haptics from "expo-haptics"
+import {SharedValue} from "react-native-reanimated";
 
-const categories = ["Overview", "News", "Orders", "Transactions"]
+
+function ToolTip({x, y}: { x: SharedValue<number>; y: SharedValue<number> }) {
+    return <Circle cx={x} cy={y} r={8} color="black"/>;
+}
 
 export default function CryptoDetailsScreen() {
     const {id} = useLocalSearchParams()
     const headerHeight = useHeaderHeight()
     const [activeIndex, setActiveIndex] = useState(0)
     const font = useFont(require("@/assets/fonts/Poppins-Regular.ttf"), 10);
+    const {state, isActive} =
+        useChartPressState({x: 0, y: {price: 0}});
+    const categories = ["Overview", "News", "Orders", "Transactions"]
+
+    useEffect(() => {
+        if (isActive) Haptics.selectionAsync()
+    }, [isActive]);
 
     const {data} = useQuery({
         queryKey: ['info', id],
@@ -91,9 +103,17 @@ export default function CryptoDetailsScreen() {
                                 }}
                                 data={tickers!}
                                 xKey="timestamp"
-                                yKeys={["price"]}>
+                                yKeys={["price"]}
+                                chartPressState={[state]}
+                            >
                                 {({points}) => (
-                                    <Line points={points?.price} color={Colors.primary} strokeWidth={3}/>
+                                    <>
+                                        <Line points={points?.price} color={Colors.primary} strokeWidth={3}/>
+                                        {isActive && (
+                                            <ToolTip x={state.x.position} y={state.y.price.position}/>
+
+                                        )}
+                                    </>
                                 )}
                             </CartesianChart>}
                         </View>
